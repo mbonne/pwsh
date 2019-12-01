@@ -1,13 +1,14 @@
 Must use Azure PowerShell and then run -  Import-Module SkypeOnlineConnector
+## the % symbol is shorthand for the 'for each' loop
 
-Import-Csv "C:\TDC-testrun.csv" |  ForEach {Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI}
+Import-Csv "C:\userList.csv" | %{Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI}
 
-Import-Csv "C:\TDC-testrun.csv" |  ForEach {Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia}
+Import-Csv "C:\userList.csv" | %{Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia}
 
-Import-Csv "C:\TDC.csv" |  ForEach {Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
+Import-Csv "C:\userList.csv" | %{Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
 
 
-Import-Csv "C:\TDC.csv" | ForEach {Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI} | ForEach {Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia} | ForEach {Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
+Import-Csv "C:\userList.csv" | %{Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI} | ForEach {Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia} | ForEach {Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
 
 
 ------------------------------------------------------------------------------------------------
@@ -16,9 +17,9 @@ https://support.switchconnect.com.au/portal/kb/articles/activating-users-for-dir
 SAMPLE CSV CONTENTS BELOW
 
 Identity,OnPremLineURI
-alex.rendell@tdc.com.au,tel:+61283322112
-andrew.rollisson@tdc.com.au,tel:+61283322113
-anthony@tdc.com.au,tel:+61283322110
+user.1@company.com.au,tel:+61283311111
+user.2@company.com.au,tel:+61283322222
+user@company.com.au,tel:+61283333333
 
 
 ----
@@ -38,32 +39,37 @@ $session = New-CsOnlineSession -Credential $cred -verbose
 Import-PSSession $session
 
 ## Enable Voice for User and assign Number
-Set-CsUser -Identity alex.rendell@tdc.com.au -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI tel:+61735329401
+Set-CsUser -Identity user.1@company.com.au -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI tel:+61283311111
 
 ## Assign Voice Route to User
-Grant-CsOnlineVoiceRoutingPolicy -Identity “alex.rendell@tdc.com.au" -PolicyName Australia
+Grant-CsOnlineVoiceRoutingPolicy -Identity "user.1@company.com.au" -PolicyName Australia
 
 ## Verify all Settings are correct
-Get-CsOnlineUser -Identity “alex.rendell@tdc.com.au" | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy
-## Examples below are using the TDC deployment to illustrate.
-Import-Csv "C:\TDC-testrun.csv" |  ForEach {Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI}
+Get-CsOnlineUser -Identity "user.1@company.com.au" | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy
+
+
+
+## Examples below to illustrate bulk action.
+
+Import-Csv "C:\userList.csv" | %{Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI}
 ##
-Import-Csv "C:\TDC-testrun.csv" |  ForEach {Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia}
+Import-Csv "C:\userList.csv" | %{Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia}
 ##
-Import-Csv "C:\TDC.csv" |  ForEach {Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
+Import-Csv "C:\userList.csv" | %{Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
 ##
 ## Or as a one liner (This is Importing .csv and applying the number to email account on the same row/line - Verify the settings as a second command when done)
-Import-Csv "C:\TDC.csv" | ForEach {Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI} | ForEach {Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia}
+Import-Csv "C:\userList.csv" | %{Set-CsUser -Identity $_.Identity -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI $_.OnPremLineURI} | ForEach {Grant-CsOnlineVoiceRoutingPolicy -Identity $_.Identity -PolicyName Australia}
 ##
-Import-Csv "C:\TDC.csv" |  ForEach {Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
+Import-Csv "C:\userList.csv" | %{Get-CsOnlineUser -Identity $_.Identity | Format-List -Property FirstName, LastName, EnterpriseVoiceEnabled, HostedVoiceMail, LineURI, UsageLocation, UserPrincipalName, WindowsEmailAddress, SipAddress, OnPremLineURI, OnlineVoiceRoutingPolicy, TeamsCallingPolicy, dialplan, TeamsInteropPolicy}
 ##
 
 ------------------------------------------------------------------------------------------------
 SAMPLE CSV CONTENTS BELOW
+
 Identity,OnPremLineURI
-alex.rendell@tdc.com.au,tel:+61283322112
-andrew.rollisson@tdc.com.au,tel:+61283322113
-anthony@tdc.com.au,tel:+61283322110
+user.1@company.com.au,tel:+61283311111
+user.2@company.com.au,tel:+61283322222
+user@company.com.au,tel:+61283333333
 
 A Note about using Variables in Powershell to reference columns in the .csv
 When defining the Variable within the command you use the $_. before the column name as the variable. Make sure it is exactly the same as the column header.
