@@ -1,3 +1,5 @@
+## Enabling Teams Phone calling - Notes file from KBs found online
+
 Must use Azure PowerShell and then run -  Import-Module SkypeOnlineConnector
 ## the % symbol is shorthand for the 'for each' loop
 Guide found here: https://support.switchconnect.com.au/portal/kb/articles/activating-users-for-direct-routing
