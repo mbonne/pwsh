@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-Find the Geo location of 
+Find the Geo location of host or public IP address.
 
 .DESCRIPTION
-using built in cmdlets, find some geographical details about a host or ip address.
+using built in cmdlets, can use this to help find some geographical details about a host or ip address.
 
 .PARAMETER hostAddress
 Parameter can be any fqdn or Public IP address
@@ -17,22 +17,6 @@ geo 1.1.1.1
 Geo Lookup of IP address - Uses mywan function defined above
 https://practical365.com/using-powershell-and-rest-api-requests-to-look-up-ip-address-geolocation-data/
 #>
-
-# param (
-#     [string]$hostAddress
-# )
-
-## Gets the Public IP Address of WAN Interface
-function mywan {
-    Write-Host ">>> (Invoke-WebRequest http://ifconfig.me/ip ).Content"
-    #$wanIP = Invoke-WebRequest ifconfig.io | Select-Object -ExpandProperty Content
-    $wanIP = (Invoke-WebRequest http://ifconfig.me/ip ).Content
-    Write-Host $wanIP -ForegroundColor Green
-    #Write-Host ">>> Invoke-RestMethod -Method Get -Uri http://ip-api.com/json/$wanIP"
-    #Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$wanIP"
-}
-
-
 function geo([string]$hostAddress) {
     if ($hostAddress) {
         #$hostAddress has value
@@ -78,5 +62,4 @@ function geo([string]$hostAddress) {
     }
     while ($select -ne 5)
 }
-#Export-ModuleMember -Function mywan
 #Export-ModuleMember -Function geo
